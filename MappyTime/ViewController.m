@@ -34,6 +34,7 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) MKMapView *mapView;
 @property (assign, nonatomic) BOOL initialLocationSet;
+@property (assign, nonatomic) BOOL currentlyLoadingData;
 @property (strong, nonatomic) NSString *userLocationPostalCode;
 @property (strong, nonatomic) NSString *eventsNearbyURLString;
 @property (strong, nonatomic) NSMutableArray *eventsInMapView;
@@ -67,6 +68,7 @@
 //        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"isLoadingDone"];
 //    }
     [super viewDidLoad];
+    self.wheel.delegate = self;
     [self prepareDataModel];
     [self prepareView];
     [self prepareMapView];
@@ -76,7 +78,7 @@
     //[self getDateOffset]; // gets difference between todays date and last date logged in.
     //[self fetchSelectedDates];
 //    //[self fetchCategories];
-    //[self prepareAddedDaysComponents];
+    [self prepareAddedDaysComponents];
     
     
 //    [self prepareLocationManager];
@@ -130,7 +132,7 @@
     } else {
         self.wheelView.alpha = 0.4;
     }
-   // self.wheelValue = 1;
+    self.wheelValue = 1;
 }
 
 - (void)prepareDateLabel {
@@ -383,7 +385,7 @@
 -(void)getEventData {
     NSString *dateString = [self setupFirstDateString];
     NSString *categoryString = [self setupCategoryString];
-
+    self.currentlyLoadingData = YES;
     if (self.shouldRefreshFromFirstDay) {
         self.shouldRefreshFromFirstDay = NO;
         [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
@@ -392,6 +394,7 @@
             
             [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
                 self.events = eventsArray;
+                self.currentlyLoadingData = NO;
                 //[self updateMap];
                 
             } failure:^(NSString *failureMessage) {
@@ -543,7 +546,7 @@
 #pragma mark - Wheel Delegate
 
 - (void)wheelDidTurnClockwise:(BOOL)didTurnClockwise {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isLoadingDone"] == YES) {
+    if (!self.currentlyLoadingData) {
         [self updateValueToIncrease:didTurnClockwise];
         [self updateDateLabel];
     }
@@ -564,9 +567,9 @@
 }
 
 -(void)wheelAction {
-    NSInteger value = self.wheelValue;
+    //NSInteger value = self.wheelValue;
     
-    self.addedDays.day = value;
+    self.addedDays.day = self.wheelValue;
     
     NSCalendar *theCalendar = [NSCalendar currentCalendar];
     NSDate *date = [theCalendar dateByAddingComponents:self.addedDays toDate:[NSDate date] options:0];
