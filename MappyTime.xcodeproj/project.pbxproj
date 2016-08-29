@@ -130,26 +130,9 @@
 			children = (
 				7B7B280E1D6E91C600B00D99 /* AppDelegate.h */,
 				7B7B280F1D6E91C600B00D99 /* AppDelegate.m */,
-				7B7B28111D6E91C600B00D99 /* ViewController.h */,
-				7B7B28121D6E91C600B00D99 /* ViewController.m */,
-				7B7B283E1D6E93B200B00D99 /* GAScrollWheel.h */,
-				7B7B283F1D6E93B200B00D99 /* GAScrollWheel.m */,
-				7B7B28401D6E93B200B00D99 /* GASection.h */,
-				7B7B28411D6E93B200B00D99 /* GASection.m */,
-				7B7B28441D6E93E000B00D99 /* FavouriteCell.h */,
-				7B7B28451D6E93E000B00D99 /* FavouriteCell.m */,
-				7B7B28461D6E93E000B00D99 /* FavouritesTableViewController.h */,
-				7B7B28471D6E93E000B00D99 /* FavouritesTableViewController.m */,
-				7B7B28481D6E93E000B00D99 /* EventbriteApi.h */,
-				7B7B28491D6E93E000B00D99 /* EventbriteApi.m */,
-				7B7B284A1D6E93E000B00D99 /* CategorySelectorTableViewController.h */,
-				7B7B284B1D6E93E000B00D99 /* CategorySelectorTableViewController.m */,
-				7B7B284C1D6E93E000B00D99 /* Category.h */,
-				7B7B284D1D6E93E000B00D99 /* Category.m */,
-				7B7B284E1D6E93E000B00D99 /* Eventy.h */,
-				7B7B284F1D6E93E000B00D99 /* Eventy.m */,
-				7B7B28501D6E93E000B00D99 /* Venue.h */,
-				7B7B28511D6E93E000B00D99 /* Venue.m */,
+				7B7B28601D73DE4C00B00D99 /* Network Protocols */,
+				7B7B285F1D73DE3100B00D99 /* Models */,
+				7B7B285E1D73DE2000B00D99 /* Controllers */,
 				7B7B28141D6E91C600B00D99 /* Main.storyboard */,
 				7B7B28171D6E91C600B00D99 /* Assets.xcassets */,
 				7B7B28191D6E91C600B00D99 /* LaunchScreen.storyboard */,
@@ -183,6 +166,71 @@
 				7B7B28321D6E91C700B00D99 /* Info.plist */,
 			);
 			path = MappyTimeUITests;
+			sourceTree = "<group>";
+		};
+		7B7B285E1D73DE2000B00D99 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				7B7B28631D73DEDE00B00D99 /* Helpers */,
+				7B7B28111D6E91C600B00D99 /* ViewController.h */,
+				7B7B28121D6E91C600B00D99 /* ViewController.m */,
+				7B7B283E1D6E93B200B00D99 /* GAScrollWheel.h */,
+				7B7B283F1D6E93B200B00D99 /* GAScrollWheel.m */,
+				7B7B28461D6E93E000B00D99 /* FavouritesTableViewController.h */,
+				7B7B28471D6E93E000B00D99 /* FavouritesTableViewController.m */,
+				7B7B284A1D6E93E000B00D99 /* CategorySelectorTableViewController.h */,
+				7B7B284B1D6E93E000B00D99 /* CategorySelectorTableViewController.m */,
+				7B7B28611D73DEAD00B00D99 /* Views */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		7B7B285F1D73DE3100B00D99 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7B7B284C1D6E93E000B00D99 /* Category.h */,
+				7B7B284D1D6E93E000B00D99 /* Category.m */,
+				7B7B284E1D6E93E000B00D99 /* Eventy.h */,
+				7B7B284F1D6E93E000B00D99 /* Eventy.m */,
+				7B7B28501D6E93E000B00D99 /* Venue.h */,
+				7B7B28511D6E93E000B00D99 /* Venue.m */,
+				7B7B28401D6E93B200B00D99 /* GASection.h */,
+				7B7B28411D6E93B200B00D99 /* GASection.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		7B7B28601D73DE4C00B00D99 /* Network Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				7B7B28481D6E93E000B00D99 /* EventbriteApi.h */,
+				7B7B28491D6E93E000B00D99 /* EventbriteApi.m */,
+			);
+			name = "Network Protocols";
+			sourceTree = "<group>";
+		};
+		7B7B28611D73DEAD00B00D99 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7B7B28621D73DEB900B00D99 /* Cells */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		7B7B28621D73DEB900B00D99 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				7B7B28441D6E93E000B00D99 /* FavouriteCell.h */,
+				7B7B28451D6E93E000B00D99 /* FavouriteCell.m */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		7B7B28631D73DEDE00B00D99 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

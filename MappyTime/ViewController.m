@@ -43,7 +43,7 @@
 @property (strong, nonatomic) NSArray *categoriesArray;
 @property (strong, nonatomic) NSString *selectedDate;
 @property (strong, nonatomic) NSDateComponents *addedDays;
-@property (strong, nonatomic) NSMutableDictionary *datesDictionary;
+@property (strong, nonatomic) NSDictionary *eventDictionary;
 @property (strong, nonatomic) GAScrollWheel *wheel;
 @property (strong, nonatomic) UIView *wheelView;
 @property (strong, nonatomic) UILabel *dateLabel;
@@ -116,6 +116,7 @@
         }
         self.selectedCategoryArray = [selectedCategories copy];
         [self getEventData];
+        
     }
 }
 - (void)prepareView {
@@ -289,9 +290,10 @@
 {
     [self.eventsInMapView removeAllObjects];
     [self.mapView removeAnnotations:self.mapView.annotations];
-    for (Eventy *event in self.events) {
-        NSString *dateString = [event.start_date substringToIndex:10];
-        if ([dateString isEqualToString:date]) {
+    NSSet *eventSet = [self.eventDictionary objectForKey:date];
+    for (Eventy *event in eventSet) {
+        //NSString *dateString = [event.start_date substringToIndex:10];
+        //if ([dateString isEqualToString:date]) {
             MKPointAnnotation *eventAnnotation = [MKPointAnnotation new];
             eventAnnotation.title = event.name;
             eventAnnotation.coordinate = CLLocationCoordinate2DMake([event.venue.latitude doubleValue], [event.venue.longitude doubleValue]) ;
@@ -299,7 +301,7 @@
             [self.mapView addAnnotation:eventAnnotation];
             //eventAnnotation.
             //[self.eventsInMapView addObject:event];
-        }
+        //}
     }
 //    for (SelectedDate* selectedDates in self.selectedDatesArray) {
 //        if ([selectedDates.date isEqualToString: date]) {
@@ -374,6 +376,23 @@
     
 }
 
+-(NSDictionary *) setupEventDictionary: (NSArray *) eventArray {
+    NSMutableDictionary *eventDictionary = [NSMutableDictionary new];
+    for (Eventy *event in eventArray) {
+        NSString *dateString = [event.start_date substringToIndex:10];
+        if ([eventDictionary objectForKey:dateString]) {
+            NSMutableSet *eventSetForDate = [[eventDictionary objectForKey:dateString] mutableCopy];
+            [eventSetForDate addObject:event];
+            [eventDictionary setObject:[eventSetForDate copy] forKey:dateString];
+        } else{
+            NSSet *eventSetForDate = [[NSSet alloc] initWithObjects:event, nil];
+            [eventDictionary setObject:eventSetForDate forKey:dateString];
+        }
+    }
+    return [eventDictionary copy];
+}
+
+
 //-(NSString *)setupUrlString {
 //    NSString *dateString = [self setupDateString];
 //    NSString *categoryString = [self setupCategoryString];
@@ -385,27 +404,30 @@
 -(void)getEventData {
     NSString *dateString = [self setupFirstDateString];
     NSString *categoryString = [self setupCategoryString];
-    self.currentlyLoadingData = YES;
-    if (self.shouldRefreshFromFirstDay) {
-        self.shouldRefreshFromFirstDay = NO;
-        [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
-            self.events = eventsArray;
-            [self updateMapForFirstDate];
-            
-            [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
+    if (!self.currentlyLoadingData) {
+        self.currentlyLoadingData = YES;
+       if (self.shouldRefreshFromFirstDay) {
+           self.shouldRefreshFromFirstDay = NO;
+           [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
                 self.events = eventsArray;
-                self.currentlyLoadingData = NO;
-                //[self updateMap];
+                [self updateMapForFirstDate];
+                NSString *dateString = [self setupDateStringForNext:30];
+                [EventbriteApi fetchEventDataWithCategoryString:categoryString dateString:dateString latitude:self.userLocation.coordinate.latitude longitude:self.userLocation.coordinate.longitude pageNumber:1 eventArray:nil success:^(NSArray *eventsArray) {
+                    self.events = eventsArray;
+                    self.eventDictionary = [self setupEventDictionary:eventsArray];
+                    self.currentlyLoadingData = NO;
+                    //[self updateMap];
+                    
+                } failure:^(NSString *failureMessage) {
+                    NSLog (@"FIRST EVENT API CALL FAILURE");
+                }];
                 
             } failure:^(NSString *failureMessage) {
-                NSLog (@"FIRST EVENT API CALL FAILURE");
+                 NSLog (@"SECOND EVENT API CALL FAILURE");
             }];
-            
-        } failure:^(NSString *failureMessage) {
-             NSLog (@"SECOND EVENT API CALL FAILURE");
-        }];
+       }
+   
     }
-    dateString = [self setupDateStringForNext:30];
     //NSString *urlString = [self setupUrlString];
     //EventbriteApi
 
@@ -730,6 +752,7 @@
         [self getEventData];
     }
 }
+
 
 - (MKOverlayView *)mapView:(MKMapView *)map viewForOverlay:(id <MKOverlay>)overlay
 {
